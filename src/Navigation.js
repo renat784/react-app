@@ -1,19 +1,17 @@
-import { Navbar, Form, Nav, Button, FormControl } from "react-bootstrap";
+import { Navbar, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function Navigation() {
   return (
     <div>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+        <Navbar.Brand>
+          <Link to="/">React-app</Link>
+        </Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#features">Features</Nav.Link>
-          <Nav.Link href="#pricing">Pricing</Nav.Link>
+          <Link to="weather">Weather</Link>
+          <Link to="currency">Currency</Link>
         </Nav>
-        <Form inline>
-          <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-          <Button variant="outline-info">Search</Button>
-        </Form>
       </Navbar>
     </div>
   );
