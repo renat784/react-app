@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import axios from "axios";
 import TableContent from "./TableContent";
+import Chart from "./Chart";
 
 class Currency extends Component {
   state = {
     data: [],
+    dataForChart: [],
     date: { fromDate: "2020-01-01", toDate: "2020-04-01" },
   };
 
@@ -26,45 +28,55 @@ class Currency extends Component {
   render() {
     return (
       <div className="text-center my-4">
-        <TableContent someData={this.state.data} />
-        <h3>Exchange course </h3>
-        <h5>foreign currencies to USD</h5>
-        <small>
-          (period from {this.state.date.fromDate} to {this.state.date.toDate})
-        </small>
+        <div>
+          <h3>Exchange course foreign currencies to USD</h3>
 
-        <div className="row my-5">
-          <div className="col-2 offset-4 text-left">
-            <label>From This Date</label>
-            <input
-              id="fromDate"
-              type="date"
-              className="form-control"
-              onChange={this.DateChanged}
-              value={this.state.date.fromDate}
-            />
-          </div>
-          <div className="col-2 text-right">
-            <label>To That Date</label>
-            <input
-              id="toDate"
-              type="date"
-              className="form-control"
-              onChange={this.DateChanged}
-              value={this.state.date.toDate}
-            />
-          </div>
+          <h6 style={{ color: "red" }}>
+            (period from {this.state.date.fromDate} to {this.state.date.toDate})
+          </h6>
+          <p>
+            <small>for some days data is not available</small>
+          </p>
         </div>
-        <div className="text-center my-5">
-          <button onClick={this.getData} className="btn btn-success">
-            Get New Data
-          </button>
+        <Chart dataForChart={this.state.dataForChart}></Chart>
+        <TableContent someData={this.state.data} />
+
+        <div className="my-5">
+          <h5>Change Period</h5>
+          <div className="row">
+            <div className="col-2 offset-4 text-left">
+              <label>From This Date</label>
+              <input
+                id="fromDate"
+                type="date"
+                className="form-control"
+                onChange={this.DateChanged}
+                value={this.state.date.fromDate}
+              />
+            </div>
+            <div className="col-2 text-right">
+              <label>To That Date</label>
+              <input
+                id="toDate"
+                type="date"
+                className="form-control"
+                onChange={this.DateChanged}
+                value={this.state.date.toDate}
+              />
+            </div>
+          </div>
+          <div className="text-center my-3">
+            <button onClick={this.getData} className="btn btn-success">
+              Get New Data
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   getData = () => {
+    console.log(this.state.date.fromDate + " " + this.state.date.toDate);
     // for some days data is not available - it's normal
     this.getCurrency(this.state.date.fromDate, this.state.date.toDate);
 
@@ -75,27 +87,25 @@ class Currency extends Component {
   getCurrency(fromDate, toDate) {
     let url;
 
-    if (!fromDate && !toDate) {
-      // default url
-      url = this.url;
-    } else {
-      // use specific url
-      url = new URL(this.url);
-      var search_params = url.searchParams;
+    // use specific url
+    url = new URL(this.url);
+    var search_params = url.searchParams;
 
-      search_params.set("start_at", fromDate);
-      search_params.set("end_at", toDate);
+    search_params.set("start_at", fromDate);
+    search_params.set("end_at", toDate);
 
-      url.search = search_params.toString();
+    url.search = search_params.toString();
 
-      url = url.toString();
-    }
+    url = url.toString();
+
+    console.log(url);
 
     axios.get(url).then((i) => {
       let someData = i.data.rates;
       // console.log(someData);
 
       let newState = this.state;
+      newState.data = [];
 
       //  make normal json objects from api response
       //  because default response has bad json structure
@@ -121,13 +131,23 @@ class Currency extends Component {
         return 0;
       });
 
+      // make data for chart
+      let dataChart = [];
+
+      newState.data.map((i) => {
+        dataChart.push({ name: i.date, eur: i.eur, gbp: i.gbp, cad: i.cad });
+      });
+
+      newState.dataForChart = dataChart;
+
       this.setState(newState);
+
       // console.log(this.state.data);
     });
   }
 
   componentDidMount() {
-    this.getCurrency();
+    this.getCurrency("2020-01-01", "2020-04-01");
   }
 }
 
