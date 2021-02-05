@@ -98,8 +98,6 @@ class Currency extends Component {
 
     url = url.toString();
 
-    console.log(url);
-
     axios.get(url).then((i) => {
       let someData = i.data.rates;
       // console.log(someData);

@@ -1,33 +1,61 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-var unirest = require("unirest");
-const app = express();
 
-let array = [
-  { id: 1, name: "John", email: "john@gmail.com" },
-  { id: 2, name: "Jack", email: "jack@gmail.com" },
-  { id: 3, name: "Bill", email: "bill@gmail.com" },
-  { id: 4, name: "Tom", email: "tom@gmail.com" },
-];
+const app = express();
+const mongoose = require("mongoose");
+
+//  'test' - database name
+mongoose.connect("mongodb://localhost/test", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+  console.log("connected");
+});
+
+const bookSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+});
+
+// 'Users' - collection name
+const User = mongoose.model("Users", bookSchema);
+
+// let users = [
+//   { name: "John", email: "john@gmail.com" },
+//   { name: "Jack", email: "jack@gmail.com" },
+//   { name: "Bill", email: "bill@gmail.com" },
+//   { name: "Tom", email: "tom@gmail.com" },
+// ];
 
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("hi");
+app.get("/api/users", (req, res) => {
+  User.find((err, result) => {
+    if (err) return console.error(err);
+    res.json(result);
+  });
 });
 
-app.get("/api", (req, res) => {
-  res.json(array);
+app.post("/api/users", (req, res) => {
+  // add item to colection
+  const { name, email } = req.body;
+  const newUser = new User({ name, email });
+
+  newUser.save(function (err, result) {
+    if (err) return console.error(err);
+    res.send(result);
+  });
 });
 
-app.get("/weather", (req, res) => {
-  let report = "report";
-
-  //
-
-  //
-
-  res.send(report);
+app.delete("/api/users", (req, res) => {
+  User.deleteOne(req.body, (error, result) => {
+    if (error) console.log(error);
+    res.send(result);
+  });
 });
 
 app.listen(3080);

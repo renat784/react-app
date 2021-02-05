@@ -2,10 +2,6 @@ import React, { Component } from "react";
 import { LineChart, XAxis, Tooltip, CartesianGrid, Line } from "recharts";
 
 class Chart extends Component {
-  componentDidMount() {
-    console.log("cdm chart , data count=" + this.props.dataForChart.length);
-  }
-
   render() {
     return (
       <div id="chart" className="col-10 offset-1 my-5">
