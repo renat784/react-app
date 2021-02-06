@@ -1,9 +1,9 @@
-a {
+nav a {
   color: white;
   margin-right: 25px;
 }
 
-a:hover {
+nav a:hover {
   color: rgb(0, 153, 255);
   text-decoration: none;
 }

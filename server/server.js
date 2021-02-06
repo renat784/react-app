@@ -1,6 +1,5 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
 const app = express();
 const mongoose = require("mongoose");
 
@@ -16,23 +15,16 @@ db.once("open", function () {
   console.log("connected");
 });
 
-const bookSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: String,
   email: String,
 });
 
 // 'Users' - collection name
-const User = mongoose.model("Users", bookSchema);
-
-// let users = [
-//   { name: "John", email: "john@gmail.com" },
-//   { name: "Jack", email: "jack@gmail.com" },
-//   { name: "Bill", email: "bill@gmail.com" },
-//   { name: "Tom", email: "tom@gmail.com" },
-// ];
-
+const User = mongoose.model("Users", userSchema);
 app.use(bodyParser.json());
 
+// get all
 app.get("/api/users", (req, res) => {
   User.find((err, result) => {
     if (err) return console.error(err);
@@ -40,8 +32,8 @@ app.get("/api/users", (req, res) => {
   });
 });
 
+// post one
 app.post("/api/users", (req, res) => {
-  // add item to colection
   const { name, email } = req.body;
   const newUser = new User({ name, email });
 
@@ -51,6 +43,7 @@ app.post("/api/users", (req, res) => {
   });
 });
 
+// delete one
 app.delete("/api/users", (req, res) => {
   User.deleteOne(req.body, (error, result) => {
     if (error) console.log(error);

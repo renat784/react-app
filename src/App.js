@@ -6,15 +6,17 @@ import { Route, Switch } from "react-router-dom";
 import Currency from "./Currency";
 import RandomImage from "./RandomImage";
 import Data from "./Data";
+import NotFound from "./NotFound";
 
 class App extends Component {
   render() {
     return (
       <Switch>
-        <Route path="/data" component={Data} />
-        <Route path="/randomimage" component={RandomImage} />
-        <Route path="/currency" component={Currency} />
-        <Route path="/" component={Currency} />
+        <Route exact path="/data" component={Data} />
+        <Route exact path="/randomimage" component={RandomImage} />
+        <Route exact path="/currency" component={Currency} />
+        <Route exact path="/" component={Currency} />
+        <Route path="**" component={NotFound} />
       </Switch>
     );
   }
